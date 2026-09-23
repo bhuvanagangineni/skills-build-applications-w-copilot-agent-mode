@@ -1,4 +1,15 @@
 import { useEffect, useState } from 'react';
-import { apiUrl } from '../api.js';
-const API_URL = apiUrl('/api/users/');
-export default function Users() { const [users, setUsers] = useState([]); useEffect(() => { fetch(API_URL).then((r) => r.json()).then((data) => setUsers(Array.isArray(data) ? data : data.results || [])).catch(() => {}); }, []); return <div className="page-wrap"><div className="page-intro"><div><span className="section-kicker">THE COMMUNITY</span><h2>People</h2><p>Meet the students making movement part of their week.</p></div></div><div className="people-grid">{users.map((user) => <article className="person-card" key={user._id}><div className="avatar avatar-large">{user.name.split(' ').map((n) => n[0]).join('')}</div><h3>{user.name}</h3><p>{user.email}</p><span>Goal: {user.weeklyGoal} min / week</span></article>)}</div></div>; }
+import { apiFetch, collection } from '../api.js';
+
+export default function Users() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    apiFetch('/api/users/').then(collection).then(setUsers).catch(() => setUsers([]));
+  }, []);
+
+  return <div className="page-wrap">
+    <div className="page-intro"><div><span className="section-kicker">THE COMMUNITY</span><h2>People</h2><p>Meet the students making movement part of their week.</p></div></div>
+    <div className="people-grid">{users.map((user, index) => <article className="person-card" key={user._id || index}><div className="avatar avatar-large">{user.name?.split(' ').map((name) => name[0]).join('') || '?'}</div><h3>{user.name || 'Athlete'}</h3><p>{user.email}</p><span>Goal: {user.weeklyGoal || 0} min / week</span></article>)}{!users.length && <p className="empty-state">No people have been added yet.</p>}</div>
+  </div>;
+}
