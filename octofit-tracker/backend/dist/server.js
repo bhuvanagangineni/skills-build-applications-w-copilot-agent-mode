@@ -4,21 +4,23 @@ import express from 'express';
 import { connectDatabase } from './config/database.js';
 import { Activity, Leaderboard, Team, User, Workout } from './models.js';
 const app = express();
-const port = Number(process.env.PORT || 800);
+const port = Number(process.env.PORT || 8000);
 app.use(cors());
 app.use(express.json());
-const list = (model) => async (_request, response) => {
+const list = (model, populatePaths = []) => async (_request, response) => {
     try {
-        response.json(await model.find().populate('user').populate('team').sort({ createdAt: -1 }));
+        const query = model.find();
+        populatePaths.forEach((path) => query.populate(path));
+        response.json(await query.sort({ createdAt: -1 }));
     }
     catch (error) {
         response.status(500).json({ message: 'Unable to load records', error });
     }
 };
 app.get('/api/health', (_request, response) => response.json({ status: 'ok', service: 'octofit-tracker-api' }));
-app.get('/api/users/', list(User));
-app.get('/api/teams/', list(Team));
-app.get('/api/activities/', list(Activity));
+app.get('/api/users/', list(User, ['team']));
+app.get('/api/teams/', list(Team, ['members']));
+app.get('/api/activities/', list(Activity, ['user']));
 app.get('/api/leaderboard/', async (_request, response) => {
     try {
         response.json(await Leaderboard.find().populate('user').sort({ rank: 1 }));
@@ -53,7 +55,7 @@ app.post('/api/teams/', async (request, response) => {
     }
 });
 const codespaceName = process.env.CODESPACE_NAME;
-const baseUrl = codespaceName ? `https://${codespaceName}-800.app.github.dev` : `http://localhost:${port}`;
+const baseUrl = codespaceName ? `https://${codespaceName}-8000.app.github.dev` : `http://localhost:${port}`;
 connectDatabase()
     .then(() => app.listen(port, () => console.log(`OctoFit API running at ${baseUrl}`)))
     .catch((error) => {
