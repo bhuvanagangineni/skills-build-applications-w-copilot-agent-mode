@@ -1,3 +1,6 @@
-import { useEffect, useState } from 'react';
-const API_URL = import.meta.env.VITE_CODESPACE_NAME ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/workouts/` : 'http://localhost:8000/api/workouts/';
-export default function Workouts() { const [workouts, setWorkouts] = useState([]); useEffect(() => { fetch(API_URL).then((r) => r.json()).then((data) => setWorkouts(Array.isArray(data) ? data : data.results || [])).catch(() => {}); }, []); return <div className="page-wrap"><div className="page-intro"><div><span className="section-kicker">PERSONALIZED FOR YOU</span><h2>Workout shelf</h2><p>Pick a session that fits the energy you have today.</p></div></div><div className="workout-grid">{workouts.map((workout) => <article className="workout-card" key={workout._id}><div className="workout-art"><span>{workout.category === 'Cardio' ? '↗' : '◒'}</span><small>{workout.duration} min</small></div><div className="workout-copy"><div><span className="section-kicker">{workout.category}</span><span className="difficulty">{workout.difficulty}</span></div><h3>{workout.title}</h3><p>{workout.description}</p><button className="text-link">View session <span>→</span></button></div></article>)}{!workouts.length && <p className="empty-state">Workout suggestions will appear here.</p>}</div></div>; }
+import React from 'react';
+  const workouts = () => {
+    const url = 'https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/workouts';
+  return <div Workouts</div>;
+  };
+export default Workouts;

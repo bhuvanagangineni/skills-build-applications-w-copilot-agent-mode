@@ -1,3 +1,6 @@
-import { useEffect, useState } from 'react';
-const API_URL = import.meta.env.VITE_CODESPACE_NAME ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/teams/` : 'http://localhost:8000/api/teams/';
-export default function Teams() { const [teams, setTeams] = useState([]); useEffect(() => { fetch(API_URL).then((r) => r.json()).then((data) => setTeams(Array.isArray(data) ? data : data.results || [])).catch(() => {}); }, []); return <div className="page-wrap"><div className="page-intro"><div><span className="section-kicker">FIND YOUR PEOPLE</span><h2>Teams</h2><p>Momentum is more fun when it is shared.</p></div><button className="button button-dark">+ Create team</button></div><div className="team-grid">{teams.map((team) => <article className="team-card" key={team._id} style={{ '--team-color': team.color }}><div className="team-top"><span className="team-mark">✳</span><span>{team.members?.length || 0} members</span></div><h3>{team.name}</h3><p>{team.motto}</p><div className="member-stack">{team.members?.map((member, i) => <span key={member?._id || i} className="avatar avatar-tiny">{member?.name?.[0] || '?'}</span>)}</div></article>)}{!teams.length && <p className="empty-state">Your teams will show up here after setup.</p>}</div></div>; }
+import React from 'react';
+const [teams = () => {
+  const url = 'https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/teams';
+  return <div>Teams</div>;
+};
+export default Teams;

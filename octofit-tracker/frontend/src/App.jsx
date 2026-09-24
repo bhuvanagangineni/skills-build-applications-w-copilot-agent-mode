@@ -5,10 +5,7 @@ import Leaderboard from './components/Leaderboard.jsx';
 import Teams from './components/Teams.jsx';
 import Users from './components/Users.jsx';
 import Workouts from './components/Workouts.jsx';
-
-const apiRoot = import.meta.env.VITE_CODESPACE_NAME
-  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev`
-  : 'http://localhost:8000';
+import { apiFetch, collection } from './api.js';
 
 function Shell({ children }) {
   const location = useLocation();
@@ -29,7 +26,7 @@ function Shell({ children }) {
 function Overview() {
   const [activities, setActivities] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
-  useEffect(() => { Promise.all([fetch(`${apiRoot}/api/activities/`).then((r) => r.json()), fetch(`${apiRoot}/api/leaderboard/`).then((r) => r.json())]).then(([a, l]) => { setActivities(Array.isArray(a) ? a : a.results || []); setLeaderboard(Array.isArray(l) ? l : l.results || []); }).catch(() => {}); }, []);
+  useEffect(() => { Promise.all([apiFetch('/api/activities/'), apiFetch('/api/leaderboard/')]).then(([a, l]) => { setActivities(collection(a)); setLeaderboard(collection(l)); }).catch(() => {}); }, []);
   const minutes = activities.reduce((sum, item) => sum + (item.duration || 0), 0);
   return <div className="page-wrap">
     <section className="welcome-banner"><div><span className="label-pill">WEEKLY PULSE</span><h2>Your energy is adding up.</h2><p>You are <strong>38 minutes</strong> away from your weekly movement goal.</p><div className="progress-track"><span style={{ width: '74%' }} /></div><small>112 / 150 minutes <b>74%</b></small></div><div className="banner-orbit"><span>74</span><small>% goal</small></div></section>
